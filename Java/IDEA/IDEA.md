@@ -34,7 +34,8 @@
 
 | key | function |
 | -------------- | --------------- |
-| Shift + F10 | 运行当前java类 |
+| Shift + F10 | 构建项目 |
+| Ctrl + Shift + F10 | 运行Java类main方法 |
 | F8 | 步过 |
 | F7 | 步入 |
 
