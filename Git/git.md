@@ -211,6 +211,7 @@ git log --pretty=format:"%h %s" --graph
 ## 撤销操作
 
 ### 提交压缩
+
 适用情况: 1. 一次提交到本地仓库有遗漏，有些东西没有暂存; 2. 将本次少量的提交内容压缩到前一次提交。
 
 下面是一个演示例子，我创建了两个文件，分别为`1.txt`和`2.txt`，本来想将其作为第一个提交，可是我第一次只跟踪暂存了`1.txt`
@@ -242,7 +243,9 @@ $ git log --pretty=format:"%h %s" --graph
 ```
 
 ### 取消暂存的文件
+
 有时为了每次提交都只提交相应模块的内容，做到方便管理。但是可能中途我只想提交`1.txt`结果却还提交了`2.txt`。此时就可以使用`git reset`命令来取消对某个文件的暂存。
+
 ```bash
 $ git add 1.txt 2.txt
 
@@ -255,6 +258,7 @@ M  1.txt
 ```
 
 ### 撤销对文件的修改
+
 我们紧接着上面的讨论，如果我此时想撤销掉工作区中对`2.txt`的修改，将其还原为上次提交完的内容。此时可以使用`git checkout`命令
 
 ```bash
@@ -262,6 +266,93 @@ M  1.txt
 $ git checkout -- 2.txt
 ```
 
+## 远程仓库的使用
+
+### 查看远程仓库
+
+```bash
+# 显示远程仓库使用的Git保存的简写和其对应的URL
+$ git remote -v
+origin https://github.com/zjremo/OrdinaryRoad.git (fetch)
+origin https://github.com/zjremo/OrdinaryRoad.git (push)
+```
+
+### 添加远程仓库
+
+添加远程仓库的命令是`git remote add <shortname> <url>`，其中`url`是远程的Git仓库地址，`shortname`是指定的一个可以轻松引用的简写。
+
+```bash
+$ git remote
+origin
+$ git remote add pb https://github.com/paulboone/ticgit
+$ git remote -v
+originhttps://github.com/schacon/ticgit (fetch)
+originhttps://github.com/schacon/ticgit (push)
+pbhttps://github.com/paulboone/ticgit (fetch)
+pbhttps://github.com/paulboone/ticgit (push)
+```
+
+### 从远程仓库中抓取与拉取
+
+从远程仓库中获取数据，可以执行:
+
+```bash
+git fetch [remote-name]
+```
+
+这个命令会访问远程仓库，从中拉取所有还没有的数据。执行完成后，你将会拥有那个远程仓库中所有分支的引用，可以随时合并或查看。
+
+如果使用`clone`命令克隆了一个仓库，命令会自动将添加为远程仓库并默认以"origin"为简写。使用`git fetch origin`会抓取克隆后新推送的所有工作。此时不会自动合并或修改当前的工作，必须手动合并入工作。
+
+`git pull`命令来自动的抓取然后合并远程分支到当前分支。
+
+### 推送到远程仓库
+
+推送命令采用`git push [remote-name] [branch-name]`，当想要将`master`分支推送到`origin`服务器时，那么运行这个命令就可以将所做的修改备份到服务器:
+
+```bash
+git push origin master
+```
+
+### 查看远程仓库
+
+如果想要查看某一个远程仓库的更多信息，可以使用`git remote show [remote-name]`命令。
+
+```bash
+$ git remote show origin
+* remote origin
+Fetch URL: https://github.com/schacon/ticgit
+Push URL: https://github.com/schacon/ticgit
+HEAD branch: master
+Remote branches:
+master
+ tracked
+dev-branch
+ tracked
+Local branch configured for 'git pull':
+master merges with remote master
+Local ref configured for 'git push':
+master pushes to master (up to date)
+```
+
+### 远程仓库的移除与重命名
+
+如果想要重命名引用的名字可以运行`git remote rename`去修改一个远程仓库的简写名。比如我之前添加了一个`https://github.com/paulboone/ticgit`远程仓库，引用设置为了`pb`，此时我想要修改为paul
+
+```bash
+$ git rename pb paul
+$ git remote
+origin
+paul
+```
+
+如果我要移除一个远程仓库，直接使用`git remote rm <shortname>`
+
+```bash
+$ git remote rm paul
+$ git remote
+origin
+```
 
 ## 重要的版本管理指令
 
