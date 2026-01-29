@@ -92,3 +92,78 @@ TIME+：自进程启动到目前为止的CPU时间总量。
 
 - 全局变量: 对于shell会话和所有生成的子shell都是可见的, 比如我们在`.zshrc`中利用`export`命令创建的环境变量
 - 局部变量: 一旦启动了bash shell（或者执行一个shell脚本），就能创建在这个shell进程内可见的局部变量了。可以通过等号给环境变量赋值，值可以是数值或字符串
+
+删除环境变量采用`unset`命令，比如`unset myvariable`
+
+### 设置PATH环境变量
+
+当在shell命令行输入一个外部命令时，shell必须搜索系统来找到对应的程序。PATH环境变量定义用于进行命令和程序查找的目录。比如我的`$PATH`如下:
+
+```bash
+$ echo $PATH
+/home/jrz/.npm-global/bin:/home/jrz/.local/share/nvim/mason/bin:/usr/lib/jvm/java-21-openjdk/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl
+```
+
+如果命令或程序的位置没有包括在`PATH`变量中，那么不使用绝对路径的话，shell是没法找到的，如果shell找不到指定的命令或程序，会产生一个错误信息：
+
+```bash
+$ myprog
+-bash: myprog: command not found
+```
+
+可以将新的搜索目录添加到现有的`PATH`环境变量中，无需从头定义：
+比如我的`.zshrc`中是这样定义`Java`和`Mason`位置的:
+
+```bash
+# JAVA路径配置
+export JAVA_HOME=/usr/lib/jvm/java-21-openjdk
+export PATH=$JAVA_HOME/bin:$PATH
+
+# Mason配置
+export MASON="$HOME/.local/share/nvim/mason"
+export PATH="$MASON/bin:$PATH"
+```
+
+## Linux文件权限
+
+用户权限是通过创建用户时分配的用户ID（User ID，通常缩写为UID）来跟踪的。UID是数值，每个用户都有唯一的UID，但在登录系统时用的不是UID，而是登录名。登录名是用户用来登录系统的最长八字符的字符串（字符可以是数字或字母），同时会关联一个对应的密码。
+
+### /etc/passwd文件
+
+这里面相当于是系统的用户数据库，记录了每一个可以登录系统的用户（包括人类用户和系统服务进程）的基本信息。
+
+```bash
+$ cat /etc/passwd
+root:x:0:0::/root:/usr/bin/bash
+bin:x:1:1::/:/usr/bin/nologin
+daemon:x:2:2::/:/usr/bin/nologin
+mail:x:8:12::/var/spool/mail:/usr/bin/nologin
+ftp:x:14:11::/srv/ftp:/usr/bin/nologin
+http:x:33:33::/srv/http:/usr/bin/nologin
+...
+```
+
+以上面的第一行为例进行说明：
+
+```text
+root:x:0:0::/root:/usr/bin/bash
+每一个信息由:进行分隔，自左向右代表:
+1. 用户名: root;
+2. 密码占位符: x。以前这里存的是加密密码，现在为了安全，密码存放在/etc/shadow中，这里用x代替;
+3. UID: 用户ID。系统内部通过数字识别用户。0 永远代表超级管理员 root;
+4. GID: 组ID。对应的是/etc/group中的主用户组编号；
+5. 用户信息: 空。用户的备注信息，一般是空的；
+6. home目录: 用户登录后的默认工作目录，比如此时root用户的就是/root；
+7. 登录shell: 用户登录后使用的命令行解释器。比如此时就是/usr/bin/bash。
+```
+
+### /etc/shadow文件
+
+上面提到的密码存放在这个位置，其实只能root用户才能访问这个文件。
+一般格式如下:
+
+```bash
+rich:$1$.FfcK0ns$f1UgiyHQ25wrB/hykCn020:11627:0:99999:7:::
+```
+
+上面的第二段东西就是加密后的密码。
