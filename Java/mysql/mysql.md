@@ -97,3 +97,100 @@ DROP TABLE [IF EXISTS] 表名;
 7. 删除指定表，并重新创建表:
 TRUNCATE TABLE 表名;
 ```
+
+#### DML
+
+添加数据:
+
+```text
+在这里只说明比较常使用的语句：
+INSERT INTO 表名(字段名1, 字段名2, ...) VALUES (值1, 值2,...), (值1, 值2, ...);
+INSERT INTO 表名 VALUES (值1, 值2,...), (值1, 值2, ...);
+
+更新表:
+UPDATE 表名 set 字段名1 = 值1, 字段名2 = 值2 where 条件;
+```
+
+#### DQL
+
+```text
+DQL语法:
+SELECT 字段1[AS 别名1], 字段2[AS 别名2] ... FROM 表名 WHERE 条件 GROUP BY 分组字段列表 HAVING 分组后条件列表 ORDER BY 排序字段列表 LIMIT 分页参数
+```
+
+上面的`DQL`的执行顺序：
+FROM -> WHERE -> GROUP BY -> HAVING -> SELECT -> ORDER BY -> LIMIT
+
+#### DCL
+
+管理用户: 确定一个USER需要通过用户名@主机来确定。
+
+```text
+1. 查询用户
+USE mysql;
+SELECT * FROM user;
+
+2. 创建用户
+CREATE USER '用户名'@'主机名' IDENTIFIED by '密码';
+比如我要创建一个可以在任意主机访问数据库的用户:
+CREATE USER '用户名'@'%' IDENTIFIED by '密码';
+
+3. 修改用户密码
+ALTER USER '用户名'@'主机名' IDENTIFIED WITH mysql_native_password BY '新密码';
+
+4. 删除用户
+DROP USER '用户名'@'主机名';
+```
+
+![用户权限控制](./img/用户权限.png)
+
+```text
+1. 查询权限:
+SHOW GRANTS FOR '用户名'@'主机名';
+2. 授予权限:
+GRANT 权限列表 ON 数据库名.表名 TO '用户名'@'主机名';
+3. 撤销权限:
+REVOKE 权限列表 ON 数据库名.表名 FROM '用户名'@'主机名';
+```
+
+### 函数
+
+#### 字符串函数
+
+常见的字符串函数如下:
+
+```text
+1. 字符串拼接: concat("hello", " mysql")
+2. 字符串转大写: upper("hello")
+3. 字符串转小写: lower("HELLO")
+4. 左填充: lpad("01", 5, '-') -> ---01
+5. 右填充: rpad("01", 5, '-') -> 01---
+6. 去除首位空格: trim(" hello   mysql ") ->  hello   mysql  
+7. 子串: SUBSTRING("hello mysql", 3, 5) -> llo m   第一个3是pos(MySQL中的字符串索引从1开始, 5是多长的字符串)
+8. 字符串长度: LENGTH("hello")
+```
+
+#### 数值函数
+
+常见的数值函数如下:
+
+```text
+1. 向上取整: CEIL(5/3)
+2. 向下取整: FLOOR(5/3)
+3. 返回模: MOD(x, y)
+4. 返回0~1内的随机数: RAND()
+5. ROUND(x, y): 求参数x的四舍五入的值，保留y位小数
+```
+
+#### 日期函数
+
+常见的日期函数如下:
+
+```text
+1. 当前日期: CURDATE() -> 2026-01-30;
+2. 当前时间: CURTIME() -> 17:44:48
+3. 显示当前日期与时间: NOW() -> 2026-01-30 17:44:48
+4. 分别显示年、月和日: YEAR(NOW()), MONTH(NOW()), DAY(NOW())
+5. 添加日期: SELECT DATE_ADD(NOW(), INTERVAL 70 YEAR); 其中这个YEAR可以换为MONTH、DAY;
+6. 日期相减: DATEDIFF("2021-12-01", "2021-10-01") -> 左边 - 右边 得到最后的天数(61)
+```
