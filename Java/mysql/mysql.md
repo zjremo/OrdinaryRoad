@@ -194,3 +194,44 @@ REVOKE 权限列表 ON 数据库名.表名 FROM '用户名'@'主机名';
 5. 添加日期: SELECT DATE_ADD(NOW(), INTERVAL 70 YEAR); 其中这个YEAR可以换为MONTH、DAY;
 6. 日期相减: DATEDIFF("2021-12-01", "2021-10-01") -> 左边 - 右边 得到最后的天数(61)
 ```
+
+#### 流程函数
+
+感觉不咋用
+
+### 约束
+
+约束是作用在表中字段上的规则，用于限制存储在表中的数据。
+
+一定要注意: 约束是作用在表中字段上的，可以在创建/修改表的时候添加约束。
+
+#### 常见约束
+
+![约束](./img/约束.png)
+
+如下是一个约束案例，其中展示了一些常见的约束:
+![约束案例](./img/约束案例.png)
+
+```SQL
+-- 创建上面案例的表
+CREATE Table user (
+    id INT PRIMARY KEY AUTO_INCREMENT COMMENT '主键',
+    name VARCHAR(10) NOT NULL UNIQUE COMMENT '姓名',
+    age INT check (age > 0 && age <= 120) COMMENT '年龄',
+    status CHAR(1) DEFAULT '1' COMMENT '状态',
+    gender CHAR(1) COMMENT '性别'
+) COMMENT '用户表';
+```
+
+#### 外键约束
+
+外键用来让两张表的数据之间建立连接，从而保证数据的一致性和完整性。
+
+其中语法分为两类，一种是在建表时直接对字段进行外键约束指定，另一种是后面利用ALTER关键字来添加约束。
+![外键约束语法](./img/外键约束语法.png)
+
+删除外键约束:
+
+```SQL
+ALTER Table emp drop FOREIGN KEY [定义的外键约束名];
+```
